@@ -215,18 +215,19 @@ describe('FileViewerManager', function () {
     })
 
     it('prompts if file size is greater than 4MB', async function () {
-        fileViewerManager.openInReadMode({ ...bigImage, bucket })
-        await getTestWindow()
-            .waitForMessage(/File size is more than 4MB/)
-            .then(message => message.selectItem(/Continue/))
-    })
-
-    it('throws if the user cancels a download', async function () {
+        // User can "Cancel".
         const didOpen = fileViewerManager.openInReadMode({ ...bigImage, bucket })
         await getTestWindow()
             .waitForMessage(/File size is more than 4MB/)
             .then(message => message.selectItem(/Cancel/))
+        // Throws if the user cancels.
         await assert.rejects(didOpen)
+
+        // User can "Continue".
+        fileViewerManager.openInReadMode({ ...bigImage, bucket })
+        await getTestWindow()
+            .waitForMessage(/File size is more than 4MB/)
+            .then(message => message.selectItem(/Continue/))
     })
 
     describe('opens text files', function () {
@@ -235,7 +236,7 @@ describe('FileViewerManager', function () {
         const textFile2Contents = Buffer.from('test2 contents', 'utf-8')
         const textFile2 = makeFile('test2.txt', textFile2Contents)
 
-        beforeEach(function () {
+        before(function () {
             s3.addFile(textFile1)
             s3.addFile(textFile2)
         })
