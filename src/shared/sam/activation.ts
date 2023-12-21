@@ -333,7 +333,7 @@ async function createYamlExtensionPrompt(): Promise<void> {
         // user opens a template file
         vscode.workspace.onDidOpenTextDocument(
             async (doc: vscode.TextDocument) => {
-                promptInstallYamlPluginFromFilename(doc.fileName, yamlPromptDisposables)
+                await promptInstallYamlPluginFromFilename(doc.fileName, yamlPromptDisposables)
             },
             undefined,
             yamlPromptDisposables
@@ -381,7 +381,7 @@ async function createYamlExtensionPrompt(): Promise<void> {
         })
 
         if (openTemplateYamls.length > 0) {
-            promptInstallYamlPluginFromEditor(openTemplateYamls[0], yamlPromptDisposables)
+            await promptInstallYamlPluginFromEditor(openTemplateYamls[0], yamlPromptDisposables)
         }
     }
 }
@@ -391,7 +391,7 @@ async function promptInstallYamlPluginFromEditor(
     disposables: vscode.Disposable[]
 ): Promise<void> {
     if (editor) {
-        promptInstallYamlPluginFromFilename(editor.document.fileName, disposables)
+        await promptInstallYamlPluginFromFilename(editor.document.fileName, disposables)
     }
 }
 
@@ -402,7 +402,7 @@ async function promptInstallYamlPluginFromEditor(
  */
 async function promptInstallYamlPluginFromFilename(fileName: string, disposables: vscode.Disposable[]): Promise<void> {
     if (fileName.endsWith('template.yaml') || fileName.endsWith('template.yml')) {
-        promptInstallYamlPlugin(disposables)
+        await promptInstallYamlPlugin(disposables)
     }
 }
 
@@ -432,9 +432,9 @@ async function promptInstallYamlPlugin(disposables: vscode.Disposable[]) {
 
     switch (response) {
         case installBtn:
-            showExtensionPage(VSCODE_EXTENSION_ID.yaml)
+            await showExtensionPage(VSCODE_EXTENSION_ID.yaml)
             break
         case permanentlySuppress:
-            settings.disablePrompt('yamlExtPrompt')
+            await settings.disablePrompt('yamlExtPrompt')
     }
 }
